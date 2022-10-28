@@ -23,7 +23,7 @@ class UploadImages extends Controller
         $path = $username . '/' . $request->file('userfile')->getClientOriginalName();
 
         if(Storage::disk('public')->exists($path)){
-            return response('Conflict. Image exist', 409);
+            return response('Conflict. Image already exist', 409);
         }
 
         if($request->file('userfile')){
@@ -31,7 +31,7 @@ class UploadImages extends Controller
             $upload_folder = "public/$username";
             $filename = $file->getClientOriginalName();
             Storage::putFileAs($upload_folder, $file, $filename);
-            return response('file with name >> ' . $request->file('userfile')->getClientOriginalName() . ' << uploaded', 200);
+            return response('file >> ' . $request->file('userfile')->getClientOriginalName() . ' << success uploaded', 200);
         }
     }
 
@@ -44,5 +44,13 @@ class UploadImages extends Controller
         $file = Storage::disk('public')->get($username . '/' . $picture);  
         return (new Response($file, 200))
               ->header('Content-Type', 'image/jpeg');
+    }
+
+    public function delete($username, $picture){
+        if(!Storage::disk('public')->exists($username . '/' . $picture)){
+            return response('Image not found', 404);
+        } 
+        Storage::disk('public')->delete($username . '/' . $picture);
+        return response('Image ' . $picture . ' deleted', 200);
     }
 }

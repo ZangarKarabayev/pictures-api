@@ -16,10 +16,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('api_token')->group( function() {
+    Route::delete('images/{username}/{picture}', [UploadImages::class, 'delete']);
+    Route::resource('images/{username?}/{picture?}', UploadImages::class);
 });
 
-Route::resource('images/{username?}/{picture?}', UploadImages::class);
+
+
+
+
+
 
 
