@@ -20,16 +20,7 @@ class UploadImages extends Controller
             return $validator->errors()->toJson();
         }
 
-        $path = $username . '/' . $request->file('userfile')->getClientOriginalName();
         $path2 = $username . '/' . $subfolder . '/' . $request->file('userfile')->getClientOriginalName();
-
-        if(Storage::disk('public')->exists($path) && $subfolder == ''){
-            return response('Conflict. Image already exist', 409);
-        }
-
-        if(Storage::disk('public')->exists($path2) && $subfolder != ''){
-            return response('Conflict. Image already exist', 409);
-        }
 
         if($request->file('userfile')){
             $file = $request->file('userfile');
@@ -38,9 +29,16 @@ class UploadImages extends Controller
             }else{
                 $upload_folder = "public/$username";
             }
-            $filename = $file->getClientOriginalName();
-            Storage::putFileAs($upload_folder, $file, $filename);
-            return response('file >> ' . $request->file('userfile')->getClientOriginalName() . ' << success uploaded', 200);
+                    if(Storage::disk('public')->exists($path2)){
+                        Storage::disk('public')->delete($path2);
+                        Storage::putFileAs($upload_folder, $file, $file->getClientOriginalName());
+                        return response('file >> ' . $request->file('userfile')->getClientOriginalName() . ' << success reloaded', 200);
+                    }else{
+                    $filename = $file->getClientOriginalName();
+                    Storage::putFileAs($upload_folder, $file, $filename);
+                    return response('file >> ' . $request->file('userfile')->getClientOriginalName() . ' << success uploaded', 200);
+                    }
+
         }
     }
 
