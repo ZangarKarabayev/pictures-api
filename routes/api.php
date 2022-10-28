@@ -15,12 +15,13 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('images/{username}/{subfolder?}/{picture?}', [UploadImages::class, 'index']);
 
 Route::middleware('api_token')->group( function() {
-    Route::delete('images/{username}/{picture}', [UploadImages::class, 'delete']);
-    Route::get('images/{username}/{picture}', [UploadImages::class, 'index']);
-    Route::post('images/{username}/{picture}', [UploadImages::class, 'store']);
     // Route::resource('images/{username?}/{picture?}', UploadImages::class);
+    
+    Route::delete('images/{username}/{subfolder?}/{picture?}', [UploadImages::class, 'delete']);
+    Route::post('images/{username}/{subfolder?}', [UploadImages::class, 'store']);
 });
 
 
