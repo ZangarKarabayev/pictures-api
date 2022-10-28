@@ -18,7 +18,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('api_token')->group( function() {
     Route::delete('images/{username}/{picture}', [UploadImages::class, 'delete']);
-    Route::resource('images/{username?}/{picture?}', UploadImages::class);
+    Route::get('images/{username}/{picture}', [UploadImages::class, 'index']);
+    Route::post('images/{username}/{picture}', [UploadImages::class, 'store']);
+    // Route::resource('images/{username?}/{picture?}', UploadImages::class);
 });
 
 
