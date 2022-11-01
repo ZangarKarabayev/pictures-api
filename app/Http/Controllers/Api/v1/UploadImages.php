@@ -32,11 +32,11 @@ class UploadImages extends Controller
                     if(Storage::disk('public')->exists($path2)){
                         Storage::disk('public')->delete($path2);
                         Storage::putFileAs($upload_folder, $file, $file->getClientOriginalName());
-                        return response('file >> ' . $request->file('userfile')->getClientOriginalName() . ' << success reloaded', 200);
+                        return response('file >> ' . url()->current() . '/' . $file->getClientOriginalName() . ' << success reloaded', 200);
                     }else{
                     $filename = $file->getClientOriginalName();
                     Storage::putFileAs($upload_folder, $file, $filename);
-                    return response('file >> ' . $request->file('userfile')->getClientOriginalName() . ' << success uploaded', 200);
+                    return response('file >> ' . url()->current() . '/' . $file->getClientOriginalName() . ' << success uploaded', 200);
                     }
 
         }
