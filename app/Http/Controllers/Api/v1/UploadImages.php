@@ -43,25 +43,22 @@ class UploadImages extends Controller
     }
 
     public function index($username, $subfolder = '', $picture = ''){
-        $path = "$username". '/';
-        $path2 = $username . '/' . $subfolder . '/';
-        if(!Storage::disk('public')->exists($path) && $subfolder == ''){
-            return response('Image not found', 404);
-        } 
-
-        if(!Storage::disk('public')->exists($path2 . '/' . $picture) && $subfolder != ''){
-            return response('Image not found', 404);
-        } 
-
-        if($subfolder == null){          
-            $file = Storage::disk('public')->get($path . $picture);  
-            return (new Response($file, 200))
-                ->header('Content-Type', 'image/jpeg');   
-        }else{
-            $file = Storage::disk('public')->get($path2 . $picture);  
-            return (new Response($file, 200))
+        $path2 = "$username/$subfolder";
+        
+        $img = '';
+        
+        $formats = ['jpg', 'png', 'gif', ];
+        foreach($formats as $format){
+            if(Storage::disk('public')->exists("$path2/$picture.$format") && $subfolder != ''){
+                  $img = "$path2/$picture.$format";
+            }else{
+                continue;
+            }
+        }    
+            
+        $file = Storage::disk('public')->get($img);  
+        return (new Response($file, 200))
                 ->header('Content-Type', 'image/jpeg');    
-        }
     }
 
     public function delete($username, $subfolder = '', $picture= ''){
