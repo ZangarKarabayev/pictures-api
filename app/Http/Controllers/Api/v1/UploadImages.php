@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Storage;
 
 class UploadImages extends Controller
 {
+    protected  $formats;
+
+    public function __construct()
+    {
+        $this->formats = ['jpg', 'png', 'gif'];
+    }
     public function store(Request $request, $username, $subfolder = ''){
 
         $validator = Validator::make($request->all(), [
@@ -47,8 +53,7 @@ class UploadImages extends Controller
         $img = '';
         
 
-        $formats = ['jpg', 'png', 'gif'];
-        foreach($formats as $format){
+        foreach($this->formats as $format){
             if(Storage::disk('public')->exists("$path2/$picture.$format") && $subfolder != ''){
                   $img = "$path2/$picture.$format";
             }else{
@@ -67,23 +72,34 @@ class UploadImages extends Controller
     }
 
     public function delete($username, $subfolder = '', $picture= ''){
-        $path = "$username". '/';
+        // $path = "$username". '/';
         $path2 = $username . '/' . $subfolder . '/';
         
-        if(!Storage::disk('public')->exists($path . $picture) && $subfolder == ''){
-            return response('Image not found', 404);
-        } 
+        // if(!Storage::disk('public')->exists($path . $picture) && $subfolder == ''){
+        //     return response('Image not found', 404);
+        // } 
+         
+        $img = '';
 
-        if(!Storage::disk('public')->exists($path2 . $picture) && $subfolder != ''){
-            return response('Image not found', 404);
-        } 
-        if($subfolder == ''){
-            Storage::disk('public')->delete($path . $picture);
-            return response('Image ' . $picture . ' deleted', 200);
+        foreach($this->formats as $format){
+            if(Storage::disk('public')->exists("$path2/$picture.$format") && $subfolder != ''){
+                  $img = "$path2/$picture.$format";
+            }else{
+                continue;
+            }
+        }  
+        if($img != ''){
+            Storage::disk('public')->delete($img);
+            return response('Image ' . $picture . ' deleted', 200);   
         }else{
-            Storage::disk('public')->delete($path2 . $picture);
-            return response('Image ' . $picture . ' deleted', 200);
+            return response('File not found', 400);
         }
+
+        // if($subfolder == ''){
+        //     Storage::disk('public')->delete($img);
+        //     return response('Image ' . $picture . ' deleted', 200);
+        // }else{
+        // }
 
     }
 }
