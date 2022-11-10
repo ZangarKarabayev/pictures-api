@@ -47,19 +47,23 @@ class UploadImages extends Controller
         $img = '';
         
 
-
-        $formats = ['jpg', 'png', 'gif', ];
+        $formats = ['jpg', 'png', 'gif'];
         foreach($formats as $format){
             if(Storage::disk('public')->exists("$path2/$picture.$format") && $subfolder != ''){
                   $img = "$path2/$picture.$format";
             }else{
-                return response('Image not file', 400);
+                continue;
             }
         }    
-            
-        $file = Storage::disk('public')->get($img);  
-        return (new Response($file, 200))
-                ->header('Content-Type', 'image/jpeg');    
+        
+        if($img != ''){
+            $file = Storage::disk('public')->get($img);  
+            return (new Response($file, 200))
+                    ->header('Content-Type', 'image/jpeg');    
+        }else{
+            return response('Image not found');
+        }
+
     }
 
     public function delete($username, $subfolder = '', $picture= ''){
