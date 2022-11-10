@@ -43,16 +43,17 @@ class UploadImages extends Controller
     }
 
     public function index($username, $subfolder = '', $picture = ''){
-        $path2 = "$username/$subfolder";
-        
+        $path2 = "$username/$subfolder";       
         $img = '';
         
+
+
         $formats = ['jpg', 'png', 'gif', ];
         foreach($formats as $format){
             if(Storage::disk('public')->exists("$path2/$picture.$format") && $subfolder != ''){
                   $img = "$path2/$picture.$format";
             }else{
-                continue;
+                return response('Image not file', 400);
             }
         }    
             
